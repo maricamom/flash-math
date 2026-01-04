@@ -83,21 +83,23 @@
     });
   }
 
-  function showSettings() {
-    state.phase = "settings";
-    elQuiz.classList.add("hidden");
-    elSettings.classList.remove("hidden");
-    elPaused.classList.add("hidden");
-    setStatus("");
-  }
+function showSettings() {
+  state.phase = "settings";
+  elQuiz.classList.add("hidden");
+  elSettings.classList.remove("hidden");
+  syncUI();
+  setStatus("");
+}
 
-  function showQuiz() {
-    state.phase = "question";
-    elSettings.classList.add("hidden");
-    elQuiz.classList.remove("hidden");
-    elPaused.classList.add("hidden");
-    setStatus("");
-  }
+
+function showQuiz() {
+  state.phase = "question";
+  elSettings.classList.add("hidden");
+  elQuiz.classList.remove("hidden");
+  syncUI();
+  setStatus("");
+}
+
 
   function showPaused() {
     state.phase = "paused";
@@ -452,6 +454,7 @@ function resume() {
 
   init();
 })();
+
 
 
 
