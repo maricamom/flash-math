@@ -96,9 +96,11 @@ function showQuiz() {
   state.phase = "question";
   elSettings.classList.add("hidden");
   elQuiz.classList.remove("hidden");
+  elQuiz.classList.remove("paused-active"); // ★追加
   syncUI();
   setStatus("");
 }
+
 
 
   function showPaused() {
@@ -362,20 +364,18 @@ function revealAnswer() {
 
 function pause() {
   if (state.phase !== "question") return;
-
   clearTimer();
   state.phase = "paused";
+  elQuiz.classList.add("paused-active"); // ★追加
   syncUI();
 }
 
 
 
-
-
 function resume() {
   if (state.phase !== "paused") return;
-
   state.phase = "question";
+  elQuiz.classList.remove("paused-active"); // ★追加
   syncUI();
   startTimer();
 }
@@ -454,6 +454,7 @@ function resume() {
 
   init();
 })();
+
 
 
 
