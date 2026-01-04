@@ -69,6 +69,23 @@
     seconds: (n) => `${n} びょう`
   };
 
+  TEXT.heading_op = "しゅつだいの しかた";
+
+  TEXT.opmode = {
+    add: "たしざん",
+    sub: "ひきざん",
+    mix: "まぜて"
+  };
+
+  TEXT.heading_range = "かずの はんい";
+
+  TEXT.range = {
+    c2a: "いちけた（0〜9）",
+    c2b: "0〜18",
+    c3: "どちらか にけた（10〜99）"
+  };
+  
+  TEXT.heading_seconds = "こたえを みるまで";
 
   const state = {
     settings: {
@@ -493,15 +510,33 @@ function resume() {
     wireUI();
     normalizeUIBySettings();
 
-    // ===== 設定画面ラベル =====
-    $("labelOp").textContent = TEXT.heading_op;
-    $("labelRange").textContent = TEXT.heading_range;
-    $("labelSeconds").textContent = TEXT.heading_seconds;
-  
-    // 出題タイプ
+    // ラベル（出題タイプ）
+    document.querySelectorAll(".card .label").forEach(label => {
+      if (label.textContent.trim() === "出題タイプ") {
+        label.textContent = TEXT.heading_op;
+      }
+    });
+    
+    // ボタン（足し算・引き算・混合）
     document.querySelector('[data-opmode="add"]').textContent = TEXT.opmode.add;
     document.querySelector('[data-opmode="sub"]').textContent = TEXT.opmode.sub;
     document.querySelector('[data-opmode="mix"]').textContent = TEXT.opmode.mix;
+
+    document.querySelectorAll(".card .label").forEach(label => {
+      if (label.textContent.trim() === "数値範囲") {
+        label.textContent = TEXT.heading_range;
+      }
+    });
+
+    document.querySelector('[data-range="c2a"]').textContent = TEXT.range.c2a;
+    document.querySelector('[data-range="c2b"]').textContent = TEXT.range.c2b;
+    document.querySelector('[data-range="c3"]').textContent = TEXT.range.c3;
+
+    document.querySelectorAll(".card .label").forEach(label => {
+      if (label.textContent.trim() === "答え表示までの秒数") {
+        label.textContent = TEXT.heading_seconds;
+      }
+    });
   
     // 数値範囲
     document.querySelector('[data-range="c2a"]').textContent = TEXT.range.c2a;
@@ -530,6 +565,7 @@ function resume() {
 
   init();
 })();
+
 
 
 
