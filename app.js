@@ -437,28 +437,28 @@ function showQuiz() {
   }
   
   
-    function revealAnswer() {
-      clearTimer();
-      state.phase = "reveal";
-    
-      state.sessionTotal += 1;
-    
-      // ★ 50問終わったら自動終了
-      if (state.sessionTotal >= 3) {
-        stop();
-        return;
-      }
-    
-      syncUI();
-    }
+  function revealAnswer() {
+    clearTimer();
+    state.phase = "reveal";
+  
+    syncUI();
+  }
 
   function submitResult(isCorrect) {
     if (!state.current) return;
-;
+  
+    state.sessionTotal += 1;
     if (isCorrect) state.sessionCorrect += 1;
-    
+  
     updateWeight(state.current.key, isCorrect);
     saveHistory();
+  
+    // ★ 50問終わったら終了
+    if (state.sessionTotal >= 3) {
+      stop();
+      return;
+    }
+  
     startQuestion();
   }
 
@@ -629,6 +629,7 @@ function pause() {
 
   init();
 })();
+
 
 
 
