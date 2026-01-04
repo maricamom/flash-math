@@ -192,3 +192,8 @@ body{
   font-size:20px;
   margin-bottom:14px;
 }
+
+/* quiz開始中は paused を絶対に表示しない */
+#screenQuiz:not(.paused-active) #paused {
+  display: none !important;
+}
