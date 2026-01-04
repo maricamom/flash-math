@@ -282,7 +282,40 @@
       state.timer = null;
     }
   }
+  function syncUI() {
+    // 停止中オーバーレイ
+    if (state.phase === "paused") {
+      elPaused.classList.remove("hidden");
+    } else {
+      elPaused.classList.add("hidden");
+    }
 
+    // 答え表示・判定ボタン
+    if (state.phase === "reveal") {
+      elAnswer.classList.remove("hidden");
+      elControlsReveal.classList.remove("hidden");
+    } else {
+      elAnswer.classList.add("hidden");
+      elControlsReveal.classList.add("hidden");
+    }
+  }
+
+  function startTimer() {
+    clearTimer();
+
+    state.timer = setInterval(() => {
+      state.remaining -= 1;
+
+      if (state.remaining <= 0) {
+        clearTimer();
+        revealAnswer();
+      } else {
+        elCountdown.textContent = `あと ${state.remaining} 秒`;
+      }
+    }, 1000);
+  }
+
+  
   function startQuestion() {
     clearTimer();
 
@@ -306,16 +339,9 @@
     elCountdown.textContent = `あと ${state.remaining} 秒`;
     state.phase = "question";
 
-state.timer = setInterval(() => {
-  state.remaining -= 1;
+    syncUI();
+    startTimer();
 
-  if (state.remaining <= 0) {
-    clearTimer();
-    revealAnswer();
-  } else {
-    elCountdown.textContent = `あと ${state.remaining} 秒`;
-  }
-}, 1000);
 
   }
 
@@ -427,37 +453,6 @@ function resume() {
   init();
 })();
 
-function syncUI() {
-  // 停止中オーバーレイ
-  if (state.phase === "paused") {
-    elPaused.classList.remove("hidden");
-  } else {
-    elPaused.classList.add("hidden");
-  }
 
-  // 答え表示・判定ボタン
-  if (state.phase === "reveal") {
-    elAnswer.classList.remove("hidden");
-    elControlsReveal.classList.remove("hidden");
-  } else {
-    elAnswer.classList.add("hidden");
-    elControlsReveal.classList.add("hidden");
-  }
-}
-
-function startTimer() {
-  clearTimer();
-
-  state.timer = setInterval(() => {
-    state.remaining -= 1;
-
-    if (state.remaining <= 0) {
-      clearTimer();
-      revealAnswer();
-    } else {
-      elCountdown.textContent = `あと ${state.remaining} 秒`;
-    }
-  }, 1000);
-}
 
 
