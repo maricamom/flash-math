@@ -87,6 +87,9 @@
   
   TEXT.heading_seconds = "こたえを みるまで";
 
+  TEXT.result = (correct, total) =>
+  `${total}もんちゅう ${correct}もん できたよ！`;
+
   const state = {
     settings: {
       opmode: "add",     // add | sub | mix
@@ -100,6 +103,8 @@
     timer: null,
     remaining: 0,
     phase: "settings",   // settings | question | reveal | paused
+    sessionTotal: 0,
+    sessionCorrect: 0
   };
 
   function loadSettings() {
@@ -397,43 +402,47 @@ function showQuiz() {
   }
 
   
-function startQuestion() {
-  // ★必ず最初に状態を正規化する
-  clearTimer();
-  state.phase = "question";
-  syncUI();
-
-  const candidates = listCandidatesBySettings();
-  if (!candidates.length) {
-    setStatus("条件に合う問題がありません。設定を見直してください");
-    showSettings();
-    return;
+  function startQuestion() {
+    // ★必ず最初に状態を正規化する
+    clearTimer();
+    state.phase = "question";
+    syncUI();
+  
+    const candidates = listCandidatesBySettings();
+    if (!candidates.length) {
+      setStatus("条件に合う問題がありません。設定を見直してください");
+      showSettings();
+      return;
+    }
+  
+    const p = weightedPick(candidates);
+    state.current = p;
+    state.prevKey = p.key;
+  
+    elProblem.textContent = formatProblem(p);
+    elAnswer.textContent = String(p.answer);
+    elAnswer.classList.add("hidden");
+    elControlsReveal.classList.add("hidden");
+  
+    state.remaining = Number(state.settings.seconds) || 3;
+    elCountdown.textContent = `あと ${state.remaining} 秒`;
+  
+    startTimer();
   }
-
-  const p = weightedPick(candidates);
-  state.current = p;
-  state.prevKey = p.key;
-
-  elProblem.textContent = formatProblem(p);
-  elAnswer.textContent = String(p.answer);
-  elAnswer.classList.add("hidden");
-  elControlsReveal.classList.add("hidden");
-
-  state.remaining = Number(state.settings.seconds) || 3;
-  elCountdown.textContent = `あと ${state.remaining} 秒`;
-
-  startTimer();
-}
-
-
-function revealAnswer() {
-  clearTimer();
-  state.phase = "reveal";
-  syncUI();
-}
+  
+  
+  function revealAnswer() {
+    clearTimer();
+    state.phase = "reveal";
+    syncUI();
+  }
 
   function submitResult(isCorrect) {
     if (!state.current) return;
+
+    state.sessionTotal += 1;
+    if (isCorrect) state.sessionCorrect += 1;
+    
     updateWeight(state.current.key, isCorrect);
     saveHistory();
     startQuestion();
@@ -463,6 +472,12 @@ function resume() {
   function stop() {
     clearTimer();
     state.current = null;
+
+    // ★結果表示
+    if (state.sessionTotal > 0) {
+      setStatus(TEXT.result(state.sessionCorrect, state.sessionTotal));
+    }
+    
     showSettings();
   }
 
@@ -501,6 +516,9 @@ function resume() {
 
     btnStart.addEventListener("click", () => {
       saveSettings();
+
+      state.sessionTotal = 0;
+      state.sessionCorrect = 0;
       showQuiz();
       startQuestion();
     });
@@ -581,6 +599,7 @@ function resume() {
 
   init();
 })();
+
 
 
 
