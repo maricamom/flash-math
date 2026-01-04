@@ -444,7 +444,7 @@ function showQuiz() {
       state.sessionTotal += 1;
     
       // ★ 50問終わったら自動終了
-      if (state.sessionTotal >= 50) {
+      if (state.sessionTotal >= 3) {
         stop();
         return;
       }
@@ -629,6 +629,7 @@ function pause() {
 
   init();
 })();
+
 
 
 
