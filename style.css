@@ -221,3 +221,10 @@ body{
   visibility: hidden;
 }
 
+.result {
+  margin: 1em 0;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-align: center;
+}
+
