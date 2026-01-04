@@ -157,6 +157,7 @@
 function showSettings() {
   state.phase = "settings";
   elQuiz.classList.add("hidden");
+  elQuiz.setAttribute("hidden", ""); 
   elSettings.classList.remove("hidden");
   syncUI();
 }
@@ -166,6 +167,7 @@ function showQuiz() {
   state.phase = "question";
   elSettings.classList.add("hidden");
   elQuiz.classList.remove("hidden");
+  elQuiz.removeAttribute("hidden"); 
   elQuiz.classList.remove("paused-active"); // ★追加
   syncUI();
   setStatus("");
@@ -621,6 +623,7 @@ function pause() {
 
   init();
 })();
+
 
 
 
