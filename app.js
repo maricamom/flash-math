@@ -462,16 +462,16 @@ function pause() {
 
 
 
-function resume() {
-  if (state.phase !== "paused") return;
-  state.phase = "question";
-  elQuiz.classList.remove("paused-active"); // ★追加
-  syncUI();
-  startTimer();
-}
-
-
-
+  function resume() {
+    if (state.phase !== "paused") return;
+    state.phase = "question";
+    elQuiz.classList.remove("paused-active"); // ★追加
+    syncUI();
+    startTimer();
+  }
+  
+  
+  
   function stop() {
     clearTimer();
     state.current = null;
@@ -481,12 +481,11 @@ function resume() {
         state.sessionCorrect,
         state.sessionTotal
       );
-    } else {
-      elResult.textContent = "";
+      elResult.classList.remove("hidden"); // ★表示
     }
   
-    showSettings();
-  }
+    showQuiz(); // 計算画面のまま
+  }}
 
 
   function wireUI() {
@@ -522,17 +521,18 @@ function resume() {
       normalizeUIBySettings();
     });
 
-    btnStart.addEventListener("click", () => {
-      saveSettings();
-
-      state.sessionTotal = 0;
-      state.sessionCorrect = 0;
-
-      elResult.textContent = "";
-      
-      showQuiz();
-      startQuestion();
-    });
+  btnStart.addEventListener("click", () => {
+    saveSettings();
+  
+    state.sessionTotal = 0;
+    state.sessionCorrect = 0;
+  
+    elResult.textContent = "";
+    elResult.classList.add("hidden"); // ★隠す
+  
+    showQuiz();
+    startQuestion();
+  });
 
     btnStop.addEventListener("click", stop);
     btnRevealNow.addEventListener("click", revealAnswer);
@@ -610,6 +610,7 @@ function resume() {
 
   init();
 })();
+
 
 
 
