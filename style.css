@@ -230,10 +230,20 @@ body{
 }
 
 #screenQuiz {
-  display: flex;
   flex-direction: column;
   min-height: 100%;
 }
+
+/* hidden のときは必ず消す */
+#screenQuiz.hidden {
+  display: none;
+}
+
+/* 表示するときだけ flex */
+#screenQuiz:not(.hidden) {
+  display: flex;
+}
+
 
 
 
