@@ -306,15 +306,17 @@
     elCountdown.textContent = `あと ${state.remaining} 秒`;
     state.phase = "question";
 
-    state.timer = setInterval(() => {
-      if (state.phase !== "question") return;
-      state.remaining -= 1;
-      if (state.remaining <= 0) {
-        revealAnswer();
-      } else {
-        elCountdown.textContent = `あと ${state.remaining} 秒`;
-      }
-    }, 1000);
+state.timer = setInterval(() => {
+  state.remaining -= 1;
+
+  if (state.remaining <= 0) {
+    clearTimer();
+    revealAnswer();
+  } else {
+    elCountdown.textContent = `あと ${state.remaining} 秒`;
+  }
+}, 1000);
+
   }
 
   function revealAnswer() {
@@ -341,6 +343,7 @@ function pause() {
   state.phase = "paused";
   syncUI();
 }
+
 
 
 
@@ -456,4 +459,5 @@ function syncUI() {
     elControlsReveal.classList.add("hidden");
   }
 }
+
 
