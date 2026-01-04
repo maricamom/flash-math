@@ -217,11 +217,27 @@ function showQuiz() {
 
   function getRangeSpec() {
     const r = state.settings.range;
-    if (r === "c2a") return { aMin: 0, aMax: 9, bMin: 0, bMax: 9, mode: "both" };
-    if (r === "c2b") return { aMin: 0, aMax: 18, bMin: 0, bMax: 18, mode: "both" };
-    // c3: one side 10-99, the other 0-9
-    return { aMin: 10, aMax: 99, bMin: 0, bMax: 9, mode: "one2digit" };
+  
+    // 一桁（1〜9）
+    if (r === "c2a") {
+      return { aMin: 1, aMax: 9, bMin: 1, bMax: 9, mode: "both" };
+    }
+  
+    // 1〜18（0なし）
+    if (r === "c2b") {
+      return { aMin: 1, aMax: 18, bMin: 1, bMax: 18, mode: "both" };
+    }
+  
+    // 片方二桁（10〜99）＋一桁（1〜9）
+    return {
+      aMin: 10,
+      aMax: 99,
+      bMin: 1,
+      bMax: 9,
+      mode: "one2digit"
+    };
   }
+
 
   function listCandidatesForOp(op) {
     const spec = getRangeSpec();
@@ -565,6 +581,7 @@ function resume() {
 
   init();
 })();
+
 
 
 
