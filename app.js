@@ -20,6 +20,7 @@
 
   const elNowNo = $('nowNo');
   const elRemainNo = $('remainNo');
+  const elProgressFill = $('progressBarFill');
 
   const elResultWrap = $('resultWrap');
   const elResult = $('result');
@@ -118,6 +119,7 @@
   function showScreen(name) {
     state.screen = name;
 
+    // settings
     if (name === 'settings') {
       elSettings.classList.remove('hidden');
       elSettings.removeAttribute('hidden');
@@ -126,6 +128,7 @@
       elSettings.setAttribute('hidden', '');
     }
 
+    // quiz
     if (name === 'quiz') {
       elQuiz.classList.remove('hidden');
       elQuiz.removeAttribute('hidden');
@@ -134,6 +137,7 @@
       elQuiz.setAttribute('hidden', '');
     }
 
+    // history
     if (name === 'history') {
       elHistory.classList.remove('hidden');
       elHistory.removeAttribute('hidden');
@@ -142,6 +146,7 @@
       elHistory.setAttribute('hidden', '');
     }
 
+    // top right button label
     if (name === 'settings') btnToSettings.textContent = 'りれき';
     if (name === 'quiz') btnToSettings.textContent = 'おわる';
     if (name === 'history') btnToSettings.textContent = 'せってい';
@@ -167,6 +172,7 @@
   }
 
   function syncQuizUI() {
+    // answer + judgement buttons
     if (state.phase === 'reveal') {
       elAnswer.classList.remove('hidden');
       elControlsReveal.classList.remove('hidden');
@@ -207,14 +213,17 @@
   function getRangeSpec() {
     const r = state.settings.range;
 
+    // ひとけた（1〜9）
     if (r === 'c2a') {
       return { aMin: 1, aMax: 9, bMin: 1, bMax: 9, mode: 'both' };
     }
 
+    // 1〜19
     if (r === 'c2b') {
       return { aMin: 1, aMax: 19, bMin: 1, bMax: 19, mode: 'both' };
     }
 
+    // どちらか にけた（10〜99） + ひとけた（1〜9）
     return {
       aMin: 10,
       aMax: 99,
@@ -251,14 +260,17 @@
       for (let two = spec.aMin; two <= spec.aMax; two++) {
         for (let one = spec.bMin; one <= spec.bMax; one++) {
           if (op === 'add') {
+            // two + one
             let a = two, b = one;
             let ans = a + b;
             if (!(sum10 && ans > 10)) out.push({ op, left: a, right: b, answer: ans, key: makeKey(op, a, b) });
 
+            // one + two
             a = one; b = two;
             ans = a + b;
             if (!(sum10 && ans > 10)) out.push({ op, left: a, right: b, answer: ans, key: makeKey(op, a, b) });
           } else {
+            // sub normalize
             let left = two, right = one;
             if (left < right) [left, right] = [right, left];
             out.push({ op, left, right, answer: left - right, key: makeKey(op, left, right) });
@@ -329,10 +341,17 @@
   }
 
   function updateProgressDisplay() {
+    // いま: 現在表示している問題番号
     const now = Math.min(TOTAL_QUESTIONS, state.sessionTotal + 1);
-    const remain = Math.max(0, TOTAL_QUESTIONS - state.sessionTotal);
+    // のこり: この問題を含めず、残っている問題数（最後の問題で 0）
+    const remain = Math.max(0, TOTAL_QUESTIONS - now);
     elNowNo.textContent = String(now);
     elRemainNo.textContent = String(remain);
+
+    if (elProgressFill) {
+      const pct = Math.max(0, Math.min(100, Math.round((state.sessionTotal / TOTAL_QUESTIONS) * 100)));
+      elProgressFill.style.width = `${pct}%`;
+    }
   }
 
   function startTimer() {
@@ -341,6 +360,7 @@
     state.timer = setInterval(() => {
       state.remaining -= 1;
 
+      // 0も表示する
       elCountdown.textContent = `あと ${Math.max(0, state.remaining)} びょう`;
 
       if (state.remaining <= 0) {
@@ -413,6 +433,7 @@
     clearTimer();
     state.phase = 'done';
 
+    // のこり 0表示にしてから結果
     elNowNo.textContent = String(Math.min(TOTAL_QUESTIONS, state.sessionTotal));
     elRemainNo.textContent = '0';
     elCountdown.textContent = 'あと 0 びょう';
@@ -434,6 +455,7 @@
         duration_ms: durationMs,
         settings: { ...state.settings }
       });
+      // keep last 200
       if (state.sets.length > 200) state.sets.length = 200;
       saveSets();
     }
@@ -466,6 +488,7 @@
   }
 
   function openQuizEnd() {
+    // quiz画面の右上は おわる
     if (state.screen !== 'quiz') return;
     finishSet({ save: true });
   }
@@ -500,10 +523,12 @@
   }
 
   function renderHistory() {
+    // chips active
     document.querySelectorAll('.chip').forEach(btn => {
       btn.classList.toggle('active', btn.getAttribute('data-filter-op') === state.histFilterOp);
     });
 
+    // problem list
     const rows = Object.entries(state.history).map(([key, h]) => {
       const [op, left, right] = key.split(':');
       return { key, op, left: Number(left), right: Number(right), h };
@@ -544,6 +569,7 @@
       }
     }
 
+    // set list
     historySetList.innerHTML = '';
     if (!state.sets.length) {
       historySetList.innerHTML = `<div class='hint'>りれきが ありません</div>`;
@@ -649,14 +675,20 @@
       showScreen('settings');
     });
 
+    // top right navigation
     btnToSettings.addEventListener('click', () => {
       if (state.screen === 'settings') return openHistory();
       if (state.screen === 'history') return openSettings();
       if (state.screen === 'quiz') return openQuizEnd();
     });
 
-    tabProblem.addEventListener('click', () => setHistTab('problem'));
-    tabSet.addEventListener('click', () => setHistTab('set'));
+    // history tabs + filters
+    tabProblem.addEventListener('click', () => {
+      setHistTab('problem');
+    });
+    tabSet.addEventListener('click', () => {
+      setHistTab('set');
+    });
 
     document.querySelectorAll('.chip[data-filter-op]').forEach(btn => {
       btn.addEventListener('click', () => {
